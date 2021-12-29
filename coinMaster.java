@@ -42,7 +42,7 @@ public class coinMaster {
 
 
     **/
-    public static void introduzirMontante(coinMaster user) {
+    public static void introduzirMontante(coinMaster user) { //provavelmente simplesmente inserir o valor logo de uma vez....
         Scanner ler = new Scanner(System.in);
         double valorRecebido = 0;
         String resposta = "";
@@ -52,6 +52,7 @@ public class coinMaster {
             temp = ler.nextDouble();
             valorRecebido += temp;
             System.out.println("Valor total introduzido: " + valorRecebido);
+            ler.reset();
             System.out.println("Deseja introduzir mais moedas? (sim(y) ou nao(n))");
             resposta = ler.nextLine();
         } while (!resposta.equalsIgnoreCase("n"));
