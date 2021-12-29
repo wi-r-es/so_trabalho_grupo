@@ -19,18 +19,33 @@ public class Teclado implements ActionListener, Runnable {
         // define layout para janela
         janela.getContentPane().setLayout( new FlowLayout() );
 
-        JButton botaoA = new JButton( "A" );
-        JButton botaoC = new JButton( "F" );
+        JButton botaoA = new JButton( "A" ); //i c e r // P pay
+        JButton botaoF = new JButton( "F" );
+        JButton botaoI = new JButton( "I" );
+        JButton botaoC = new JButton( "C" );
+        JButton botaoE = new JButton( "E" );
+        JButton botaoR = new JButton( "R" );
+        JButton botaoP = new JButton( "P" ); //PAY
 
         // define listeners para botões
         botaoA.addActionListener( this );
+        botaoF.addActionListener( this );
+        botaoI.addActionListener( this );
         botaoC.addActionListener( this );
+        botaoE.addActionListener( this );
+        botaoR.addActionListener( this );
+        botaoP.addActionListener( this );
 
         // adiciona botões à janela
         janela.add( botaoA );
+        janela.add( botaoF );
+        janela.add( botaoI );
         janela.add( botaoC );
+        janela.add( botaoE );
+        janela.add( botaoR );
+        janela.add( botaoP );
 
-        janela.pack(); 
+        janela.pack();
         janela.setLocationRelativeTo( null );
         janela.setVisible( true );
         janela.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
@@ -48,6 +63,26 @@ public class Teclado implements ActionListener, Runnable {
         else if ( action.equals( "F" ) ) {
             buffer.setBotao( "F" );
             semMT.release();
+        }
+        else if ( action.equals( "I" ) ) {
+            buffer.setBotao( "I" );
+            semMT.release();
+        }
+        else if ( action.equals( "C" ) ) {
+            buffer.setBotao( "C" );
+            semMT.release();
+        }
+        else if ( action.equals( "E" ) ) {
+              buffer.setBotao( "E" );
+              semMT.release();
+        }
+        else if ( action.equals( "R" ) ) {
+                  buffer.setBotao( "R" );
+                  semMT.release();
+        }
+        else if ( action.equals( "P" ) ) {
+                      buffer.setBotao( "P" );
+                      semMT.release();
         }
     }
 
