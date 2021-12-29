@@ -22,6 +22,10 @@ public class asperSec implements Runnable {
         x=sem2;
     }
 
+    /**   DESCRICAO DE RUN
+
+
+    **/
     public void run () {
         while (true) {
             try {

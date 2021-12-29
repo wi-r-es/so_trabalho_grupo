@@ -23,6 +23,10 @@ public class coinInterface {
         }
     }
 
+    /**   DESCRICAO DE introduzirMontante
+
+
+    **/
     public static double introduzirMontante() {
         double valorRecebido = 0, valorTotal = 0;
         String resposta = "";
@@ -38,6 +42,10 @@ public class coinInterface {
         return valorTotal;
     }
 
+    /**   DESCRICAO DE lerMoeda
+
+
+    **/
     public static double lerMoeda() {
         double temp = 0;
         int count = 0;
@@ -51,10 +59,18 @@ public class coinInterface {
         return temp;
     }
 
+    /**   DESCRICAO DE devolverTroco
+
+
+    **/
     public static double devolverTroco(double montante, double valorIntroduzido) {
         return calcularTroco(montante, valorIntroduzido);
     }
-    
+
+    /**   DESCRICAO DE calcularTroco
+
+
+    **/
     public static double calcularTroco(double montante, double valorIntroduzido) {
         return valorIntroduzido - montante;
     }

@@ -14,7 +14,8 @@ public class Teclado implements ActionListener, Runnable {
     }
 
     public void mostraJanela() {
-        janela = new JFrame( "Nova janela" );
+        GraphicsConfiguration gfx_config = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+        janela = new JFrame( "Consola de Comandos", gfx_config );
 
         // define layout para janela
         janela.getContentPane().setLayout( new FlowLayout() );
