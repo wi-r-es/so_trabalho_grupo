@@ -43,23 +43,54 @@ public class coinMaster {
 
     **/
     public static void introduzirMontante(coinMaster user) { //provavelmente simplesmente inserir o valor logo de uma vez....
-        Scanner ler = new Scanner(System.in);
-        double valorRecebido = 0;
-        String resposta = "";
-        do {
-            double temp;
-            System.out.println("Introduza as moedas");
-            temp = ler.nextDouble();
-            valorRecebido += temp;
-            System.out.println("Valor total introduzido: " + valorRecebido);
-            ler.reset();
-            System.out.println("Deseja introduzir mais moedas? (sim(y) ou nao(n))");
-            resposta = ler.nextLine();
-        } while (!resposta.equalsIgnoreCase("n"));
-        user.recieved = valorRecebido;
-        if(user.recieved!=0){user.handfull=1;}
-        else{ System.err.println();}
-    }
+       //Scanner ler = new Scanner(System.in);
+       double valorRecebido = 0;
+       String t= "";
+       /*do {
+           double temp;
+           System.out.println("Introduza as moedas");
+           temp = ler.nextDouble();
+           valorRecebido += temp;
+           System.out.println("Valor total introduzido: " + valorRecebido);
+           ler.reset();
+           System.out.println("Deseja introduzir mais moedas? (sim(y) ou nao(n))");
+           resposta = ler.nextLine();
+       } while (!resposta.equalsIgnoreCase("n")); */
+
+
+           valorRecebido = insertCoin();
+           t = ask();
+           if (t.equalsIgnoreCase("y"))
+           {
+               valorRecebido += insertCoin();
+           }
+           else
+           {
+            user.recieved = valorRecebido;
+            if(user.recieved!=0){user.handfull=1;}
+            else{ System.err.println(); }
+        }
+   }
+
+ private static double insertCoin(){
+   Scanner ler = new Scanner(System.in);
+
+   double x;
+   System.out.println("Introduza as moedas");
+             x= ler.nextDouble();
+           return x;
+
+
+ }
+
+ private static String ask() {
+   Scanner ler = new Scanner(System.in);
+   String r = "";
+   System.out.println("Deseja introduzir mais moedas? (sim(y) ou nao(n))");
+             r = ler.nextLine();
+   if ( r.equalsIgnoreCase("y") || r.equalsIgnoreCase("n") ) {return r;}
+   else {ask(); return null;}
+}
 
     /**   DESCRICAO DE devolverTroco
 
