@@ -7,7 +7,7 @@ public class Main
         double access_cost = 14.5;
         int users = -1,size=5;
         Thread[] thscoinuser = new Thread[size];
-        private Object lock = new Object(); //mutex lock        usar com synchronized(){} para objetos partilhados 
+        private Object lock = new Object(); //mutex lock        //usar com synchronized(){} para objetos partilhados 
 
 
         Semaphore semMT = new Semaphore( 0 );
