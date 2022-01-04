@@ -1,10 +1,10 @@
 import java.util.concurrent.Semaphore;
 
-public class main
+public class Main
 {
     public static void main(String[] args) throws InterruptedException {
 
-        double montanteTotal = 14.5;
+        double access_cost = 14.5;
         int users = -1,size=5;
         Thread[] thscoinuser = new Thread[size];
 
@@ -51,13 +51,70 @@ public class main
                     System.arraycopy(thscoinuser, 0, arraycopy, 0, size);
                     thscoinuser = arraycopy;
                 }else {
-                    thscoinuser[users] = new Thread(new coinMaster(montanteTotal));
+                    thscoinuser[users] = new Thread(new coinMaster(access_cost));
                     thscoinuser[users].start();
                 }
+            }
+            else if( botao.equals( "K" ) ){
+
+                print("INITIATING MODULE EDIT CONFIG FILE....", 56);
+                boolean cond = ConfigProperties.newConfiguration();
+                if (cond)
+                {
+                  System.out.println("Configuration file successfully saved...");
+                }
+                else
+                {
+                  System.out.println("Error occured while trying to save the file...");
+                }
+
+            }
+            else if( botao.equals( "L" ) ){
+              print("INITIATING MODULE LOAD CONFIG FILE....", 56);
+              config cfg = new config();
+              access_cost   = Double.parseDouble(cfg.getProperty("access_cost"));
+              int durationT   = Integer.parseInt(cfg.getProperty("durationT"));
+              int durationR   = Integer.parseInt(cfg.getProperty("durationR"));
+              boolean asperAct   = Boolean.parseBoolean(cfg.getProperty("asperAct"));
+              boolean secAct   = Boolean.parseBoolean(cfg.getProperty("secAct"));
+              System.out.println(access_cost + "     "+ durationR + "     "+ durationT+ "     "+ asperAct+ "     "+ secAct);
+
             }
         }
 
 
         // t.join();
+    }
+
+
+    private static void print(String message, int k)
+    {
+      beautify(k);
+      beautify(k,50);
+      System.out.print(message);
+      beautify(k,50);
+      beautify();
+      beautify(k);
+
+    }
+    private static void beautify()
+    {
+      System.out.println();
+    }
+    private static void beautify(int k)
+    {
+      for(int i=0; i<k-6; i++)
+      {
+        System.out.print("#");
+      }
+      beautify();
+    }
+    private static void beautify(int k, int d)
+    {
+      for(int i=0; i<k-d; i++)
+      {
+        System.out.print("#");
+      }
+
     }
 }

@@ -1,7 +1,8 @@
 import java.util.concurrent.Semaphore;
 
 @SuppressWarnings({"unchecked", "deprecation"})
-public class tapete implements Runnable {
+public class tapete implements Runnable
+{
 
 
     Semaphore s;

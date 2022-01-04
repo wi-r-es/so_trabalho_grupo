@@ -1,14 +1,15 @@
 import java.util.Scanner;
 
-public class coinMaster implements Runnable {
+public class coinMaster implements Runnable
+{
 
     private static double Custo;
     double recieved;
     private byte handfull; //variavel para controlar se esta a reter dinheiro
 
-    public coinMaster(double montanteTotal){
+    public coinMaster(double access_cost){
         recieved=0;
-        Custo= montanteTotal;
+        Custo= access_cost;
     }
 
     /**   DESCRICAO DE introduzirMontante
