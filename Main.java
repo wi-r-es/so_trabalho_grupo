@@ -12,6 +12,8 @@ public class Main
         Semaphore semMT = new Semaphore( 0 );
         Buffer buffer = new Buffer();
         Thread t = new Thread( new Teclado( semMT, buffer ) );
+        Thread log = new Thread( new LogRegister( semMT ));
+
 
         t.start();
         System.out.println("Escolha a opção na janela aberta");
@@ -37,6 +39,7 @@ public class Main
             }
             else if ( botao.equals( "E" ) ) { // pause the entire system
                 System.out.println( "E" );
+                
             }
             else if ( botao.equals( "R" ) ) { //reset
                 System.out.println( "R" );
