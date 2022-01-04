@@ -7,16 +7,17 @@ public class Main
         double access_cost = 14.5;
         int users = -1,size=5;
         Thread[] thscoinuser = new Thread[size];
-        private Object lock = new Object(); //mutex lock        //usar com synchronized(){} para objetos partilhados 
+        //Object lock = new Object(); //mutex lock        usar com synchronized(){} para objetos partilhados
 
 
         Semaphore semMT = new Semaphore( 0 );
         Buffer buffer = new Buffer();
         Thread t = new Thread( new Teclado( semMT, buffer ) );
-        Thread log = new Thread( new LogRegister( semMT ));
+        Thread log = new Thread( new LogRegister( semMT ));  //use this one as the main controller 
 
 
         t.start();
+        //log.start();
         System.out.println("Escolha a opção na janela aberta");
 
         while ( true ) {
@@ -40,6 +41,7 @@ public class Main
             }
             else if ( botao.equals( "E" ) ) { // pause the entire system
                 System.out.println( "E" );
+
 
             }
             else if ( botao.equals( "R" ) ) { //reset
