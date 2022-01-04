@@ -7,6 +7,7 @@ public class Main
         double access_cost = 14.5;
         int users = -1,size=5;
         Thread[] thscoinuser = new Thread[size];
+        private Object lock = new Object(); //mutex lock        usar com synchronized(){} para objetos partilhados 
 
 
         Semaphore semMT = new Semaphore( 0 );
@@ -39,7 +40,7 @@ public class Main
             }
             else if ( botao.equals( "E" ) ) { // pause the entire system
                 System.out.println( "E" );
-                
+
             }
             else if ( botao.equals( "R" ) ) { //reset
                 System.out.println( "R" );
