@@ -15,31 +15,42 @@ public class asperSec implements Runnable {
         x=sem2;
     }
 
-    public asperSec(Semaphore sem, Semaphore sem2){
-        aspertemp = 5;
-        randomNum = ThreadLocalRandom.current().nextInt(3, 6 + 1);
-        s=sem;
-        x=sem2;
-    }
-
     /**   DESCRICAO DE RUN
 
 
-    **/
+     **/
     public void run () {
         while (true) {
-            try {
-                s.acquire();
-                Thread.sleep(randomNum * 1000);
+            if(s.tryAcquire()){
+                System.out.println("secador ligado");
+                try {
+                    Thread.sleep(randomNum * 1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("secador terminou");
                 s.release();
-            } catch (InterruptedException iex) {
-            }
-            try {
-                x.acquire();
-                Thread.sleep(aspertemp * 1000);
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }else if(x.tryAcquire()){
+                System.out.println("Aspersor ligado");
+                try {
+                    Thread.sleep(aspertemp * 1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("Aspersor terminou");
                 x.release();
-            } catch (InterruptedException iex) {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
+
         }
 
     }

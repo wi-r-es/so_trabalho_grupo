@@ -11,21 +11,19 @@ public class washRoler implements Runnable {
         s=sem;
     }
 
-    public washRoler(Semaphore sem){
-        randomNum = ThreadLocalRandom.current().nextInt(4, 8 + 1);
-        s=sem;
-    }
 
     public void run () {
         while (true) {
             try {
                 s.acquire();
+                System.out.println("Rolos ligados");
                 Thread.sleep(randomNum * 1000);
+                System.out.println("Rolos terminaram");
                 s.release();
+                Thread.sleep(1000);
             } catch (InterruptedException iex) {
             }
 
         }
     }
-
 }
