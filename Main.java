@@ -5,7 +5,6 @@ public class Main
     public static void main(String[] args) throws InterruptedException {
 
         double access_cost = 14.5;
-        Thread[] thscoinuser = new Thread[size];
 
         int asper = 5,secardoMin = 3, secadorMax = 6,washRolerMim=4,washRolerMax=8;
 
@@ -140,7 +139,7 @@ public class Main
                         thscoinuser = arraycopy;
                     } else {
                         userpayed[users] = new Semaphore(1, true);
-                        thscoinuser[users] = new Thread(new coinMaster(Custo, userpayed[users]));
+                        thscoinuser[users] = new Thread(new coinMaster(access_cost, userpayed[users]));
                         thscoinuser[users].start();
                     }
                 }else{
