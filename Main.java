@@ -72,8 +72,8 @@ public class Main
                 System.out.println("Escolha a opção na janela aberta");
             }
             else if ( botao.equals( "I" ) ) { // Iniciar Lavagem
-                System.out.println( "I" );
-                int vezes=0;
+                print( "CAR WASH MODULE INITIATED...",56 );
+                int vezes=0; //PARA QUE ESTA VARIAVEL ???
 
                 //print("teste 1", 10);
                 if(users > usersTryedToServerd){
@@ -85,33 +85,27 @@ public class Main
                             vezes++;
                             //print("teste 4", 10);
                             if(mainsem.tryAcquire()) {
-                              //print("teste 5", 10);
-                              //synchronized(this)
+
                               {
                                 tapeteMoveCarForward(Tapete, controller);
-                                //print("teste 6", 10);
 
                                 print("O carro vai ser lavado agora....");
                                 AsperSec.sleep(100);
-                                //Tapete.join(100);
 
                                 aspersorToCar(AsperSec, controller);
-                                //print("test");
+                        ;
                                 Roler.sleep(100);
                                 rollerWashCar(Roler, controller);
-                                //print("teste1");
+
                                 AsperSec.sleep(100);
                                 secarCarro(AsperSec, controller);
-                                //print("teste2");
-
-                                //tapeteMoveCarForward(Tapete,controller);
-                                //print("teste3");
 
                                 System.out.println( "Lavagem completa" );
                                 print("Volte Sempre...");
                                 //remove one client or next cliente
-                                
+
                                 usersServerd++;
+                                mainsem.release();
                               }
                             }else{
                                 System.out.println( "Sistema ocupado" );
@@ -131,7 +125,7 @@ public class Main
                 System.out.println( "C" );
             }
             else if ( botao.equals( "E" ) ) { // pause the entire system
-                System.out.println( "E" );
+                print( "EVERYTHING PAUSED...",56 );
 
 
             }
@@ -298,6 +292,14 @@ public class Main
           }
         }
       }catch(InterruptedException e ){}
+    }
+    private static void pauseALL() throws InterruptedException
+    {
+
+    }
+    private static void resetSystem()
+    {
+      
     }
 
 }
