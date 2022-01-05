@@ -1,12 +1,16 @@
 import java.util.Scanner;
 import java.util.concurrent.Semaphore;
-
+import java.util.concurrent.atomic.AtomicBoolean;
 public class coinMaster implements Runnable {
 
     private static double Custo;
     private Semaphore payed;
     double recieved;
     private byte handfull; //variavel para controlar se esta a reter dinheiro
+
+    private static AtomicBoolean running = new AtomicBoolean(true);
+    private static AtomicBoolean paused = new AtomicBoolean(false);
+    private static Object pauseLock = new Object();
 
     public coinMaster(double montanteTotal, Semaphore payedtemp){
         recieved=0;
@@ -39,9 +43,39 @@ public class coinMaster implements Runnable {
         return x;
     }
 
-
+//----------------------------------------------------------------------------------------------------------------------------------------------------
     @Override
     public void run() {
+      while (running.get()) {
+        synchronized(pauseLock)
+        {
+          if(!(running.get())) //may have changed while waiting
+          { //syncrhonize on pause_lock
+            System.out.println("coinMasterThread stopped....");
+            break;
+          }
+          if (paused.get())
+          {
+            try {
+                synchronized (pauseLock) {
+                  System.out.println("coinMiasterThread paused....");
+                  pauseLock.wait(); // will cause this Thread to block until
+                    // another thread calls pauseLock.notifyAll()
+                    // Note that calling wait() will
+                    // relinquish the synchronized lock that this
+                    // thread holds on pauseLock so another thread
+                    // can acquire the lock to call notifyAll()
+                    // (link with explanation below this code)
+                }
+            } catch (InterruptedException ex) {
+                break;
+            }
+            if (!(running.get())) { // running might have changed since we paused
+                break;
+            }
+          }
+
+        }
         System.out.println( "INICIAR MODULO INTRODUZIR MOEDA..." );
         Scanner ler = new Scanner(System.in);
         double troco = 0;
@@ -72,7 +106,7 @@ public class coinMaster implements Runnable {
                     try {
                         payed.acquire();
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        //e.printStackTrace();
                     }
                     System.out.println("Espere a sua vez para iniciar a lavagem ");
                     System.out.println("Escolha a opção na janela aberta");
@@ -80,4 +114,5 @@ public class coinMaster implements Runnable {
             }
         }while (troco==0);
     }
+  }
 }
