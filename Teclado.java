@@ -3,7 +3,8 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.util.concurrent.Semaphore;
 
-public class Teclado implements ActionListener, Runnable {
+public class Teclado implements ActionListener, Runnable
+{
     JFrame janela;
     Semaphore semMT;
     Buffer buffer;
@@ -22,11 +23,13 @@ public class Teclado implements ActionListener, Runnable {
 
         JButton botaoA = new JButton( "A" ); //i c e r // P pay
         JButton botaoF = new JButton( "F" );
-        JButton botaoI = new JButton( "I" );
-        JButton botaoC = new JButton( "C" );
-        JButton botaoE = new JButton( "E" );
-        JButton botaoR = new JButton( "R" );
+        JButton botaoI = new JButton( "I" ); //start system
+        JButton botaoC = new JButton( "C" ); //cancel
+        JButton botaoE = new JButton( "E" ); //pause resume
+        JButton botaoR = new JButton( "R" ); //reset
         JButton botaoP = new JButton( "P" ); //PAY
+        JButton botaoK = new JButton( "K" ); //create config file
+        JButton botaoL = new JButton( "L" ); //load config file
 
         // define listeners para botões
         botaoA.addActionListener( this );
@@ -36,6 +39,8 @@ public class Teclado implements ActionListener, Runnable {
         botaoE.addActionListener( this );
         botaoR.addActionListener( this );
         botaoP.addActionListener( this );
+        botaoK.addActionListener( this );
+        botaoL.addActionListener( this );
 
         // adiciona botões à janela
         janela.add( botaoA );
@@ -45,6 +50,8 @@ public class Teclado implements ActionListener, Runnable {
         janela.add( botaoE );
         janela.add( botaoR );
         janela.add( botaoP );
+        janela.add( botaoK );
+        janela.add( botaoL );
 
         janela.pack();
         janela.setLocationRelativeTo( null );
@@ -83,6 +90,14 @@ public class Teclado implements ActionListener, Runnable {
         }
         else if ( action.equals( "P" ) ) {
                       buffer.setBotao( "P" );
+                      semMT.release();
+        }
+        else if ( action.equals( "K" ) ) {
+                      buffer.setBotao( "K" );
+                      semMT.release();
+        }
+        else if ( action.equals( "L" ) ) {
+                      buffer.setBotao( "L" );
                       semMT.release();
         }
     }
