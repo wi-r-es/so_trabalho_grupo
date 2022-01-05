@@ -4,76 +4,80 @@ import java.util.Properties;
 
 public class ConfigProperties //implements Runnable
 {
-    public static boolean newConfiguration(double cost, int t, int r, boolean asper, boolean sec) //qual o tipo para a cena de ativacao ?
+    public static boolean newConfiguration(double cost, int wmim, int wmax, int smim, int smax, int asper) //qual o tipo para a cena de ativacao ?
     {
-    	Properties prop = new Properties();
+        Properties prop = new Properties();
 
-    	try {
-    		//set the properties value
-    		prop.setProperty("access_cost", Double.toString(cost) );
-    		prop.setProperty("durationT", Integer.toString(t) ); //seconds, tapete
-    		prop.setProperty("durationR", Integer.toString(r) ); //roller
-        prop.setProperty("asperAct", Boolean.toString(asper) ); //aspersores
-        prop.setProperty("secAct", Boolean.toString(sec) ); //secadoes
+        try {
+            //set the properties value
+            prop.setProperty("access_cost", Double.toString(cost) );
+            prop.setProperty("washRolerMim", Integer.toString(wmim) ); //roller minimo tempo em segundos
+            prop.setProperty("washRolerMax", Integer.toString(wmax) ); //roller maximo tempo em segundos
+            prop.setProperty("secardoMin", Integer.toString(smim) );   //Secador minimo tempo em segundos
+            prop.setProperty("secadorMax", Integer.toString(smax) );   //Secador maximo tempo em segundos
+            prop.setProperty("asper", Integer.toString(asper) );       //aspersor
 
-        System.out.println("STORING CONFIG FILE");
+            System.out.println("STORING CONFIG FILE");
 
 
-    		//save properties to project deaful folder
-    		prop.store(new FileOutputStream("config.properties"), null);
-        return true;
+            //save properties to project deaful folder
+            prop.store(new FileOutputStream("config.properties"), null);
+            return true;
 
-    	} catch (IOException ex) {
-    		ex.printStackTrace();
-        return false;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return false;
         }
     }
 
-    public static boolean newConfiguration(String cost, String t, String r, String asper, String sec)
+
+    public static boolean newConfiguration(String cost, String wmim, String wmax, String smim, String smax, String asper)
     {
-    	Properties prop = new Properties();
+        Properties prop = new Properties();
 
-    	try {
-    		//set the properties value
-    		prop.setProperty("access_cost", cost );
-    		prop.setProperty("durationT", t ); //seconds, tapete
-    		prop.setProperty("durationR", r ); //roller
-        prop.setProperty("asperAct", asper ); //aspersores
-        prop.setProperty("secAct", sec ); //secadoes
+        try {
+            //set the properties value
+            prop.setProperty("access_cost", cost );
+            prop.setProperty("washRolerMim", wmim ); //roller minimo tempo em segundos
+            prop.setProperty("washRolerMax", wmax ); //roller maximo tempo em segundos
+            prop.setProperty("secardoMin", smim );   //Secador minimo tempo em segundos
+            prop.setProperty("secadorMax", smax );   //Secador maximo tempo em segundos
+            prop.setProperty("asper", asper );       //aspersor
 
-    		//save properties to project deaful folder
-        System.out.println("STORING CONFIG FILE");
-    		prop.store(new FileOutputStream("config.properties"), null);
-        return true;
+            //save properties to project deaful folder
+            System.out.println("STORING CONFIG FILE");
+            prop.store(new FileOutputStream("config.properties"), null);
+            return true;
 
-    	} catch (IOException ex) {
-    		ex.printStackTrace();
-        return false;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return false;
         }
     }
 
     public static boolean newConfiguration()
     {
-    	Properties prop = new Properties();
+        Properties prop = new Properties();
 
-    	try {
-    		//set the properties value
-    		prop.setProperty("access_cost", "0" );
-    		prop.setProperty("durationT", "0" ); //seconds, tapete
-    		prop.setProperty("durationR", "0" ); //roller
-        prop.setProperty("asperAct", "false" ); //aspersores
-        prop.setProperty("secAct", "false" ); //secadoes
+        try {
+            //set the properties value
+            prop.setProperty("access_cost", "14.5" );
+            prop.setProperty("washRolerMim", "4" ); //roller minimo tempo em segundos
+            prop.setProperty("washRolerMax", "8" ); //roller maximo tempo em segundos
+            prop.setProperty("secardoMin", "3" );   //Secador minimo tempo em segundos
+            prop.setProperty("secadorMax", "6" );   //Secador maximo tempo em segundos
+            prop.setProperty("asper", "5" );       //aspersor
 
-        System.out.println("STORING CONFIG FILE");
+            System.out.println("STORING CONFIG FILE");
 
 
-    		//save properties to project deaful folder
-    		prop.store(new FileOutputStream("config.properties"), null);
-        return true;
+            //save properties to project deaful folder
+            prop.store(new FileOutputStream("config.properties"), null);
+            return true;
 
-    	} catch (IOException ex) {
-    		ex.printStackTrace();
-        return false;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return false;
         }
     }
 

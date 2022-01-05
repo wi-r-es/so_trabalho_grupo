@@ -56,7 +56,7 @@ public class coinMaster implements Runnable {
             System.out.println("Deseja retirar o dinheiro? (Digite 'C' se desejar e qualquer outra para continuar para o pagamento)");
             resposta2 = ler.nextLine();
             if (resposta2.equalsIgnoreCase("C")) {
-                System.out.println("Valor devolvido" + this.recieved);
+                System.out.println("Valor devolvido: " + this.recieved);
                 this.recieved = 0;
                 System.out.println("Cancelado com sucesso");
                 break;
