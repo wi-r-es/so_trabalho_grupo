@@ -21,20 +21,23 @@ public class tapete implements Runnable
     public void run () {
         while(true) {
             try {
-                s.acquire();
+                synchronized (this) {
+                  s.acquire();
 
-                System.out.println("tapete a funcionar");
+                  System.out.println("tapete a funcionar");
 
-                Thread.sleep(2000);
-                System.out.println("chegou ao ponto de lavagem");
-                s2.release();
-                while (s.availablePermits() == 0) {
-                    Thread.sleep(500);
+                  Thread.sleep(2000);
+                  System.out.println("chegou ao ponto de lavagem");
+                  s2.release();
+                  while (s.availablePermits() == 0) {
+                      Thread.sleep(500);
+                  }
+                  System.out.println("tapete parou");
+
+                  Thread.sleep(1000);
                 }
-                System.out.println("tapete parou");
-
-                Thread.sleep(1000);
             } catch (InterruptedException iex) {
+              //Thread.join();
             }
         }
 

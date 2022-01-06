@@ -1,33 +1,67 @@
 import java.util.Scanner;
 import java.util.concurrent.Semaphore;
-
-public class Main
+import java.util.concurrent.atomic.AtomicBoolean;
+//import java.u
+public class Main extends Thread
 {
+
+  static double access_cost = 14.5;
+  static int asper = 5,secardoMin = 3, secadorMax = 6,washRolerMim=4,washRolerMax=8;
+  static int users = -1,usersTryedToServerd = 0,usersTryedToServerdCancel = 0,size=20;
+  static Semaphore tapetefunc = new Semaphore( 0 );
+  static Semaphore tapetemesg = new Semaphore( 0 );
+  static Thread tapete = new Thread( new tapete(tapetefunc,tapetemesg));
+  static Semaphore asperfunc = new Semaphore( 0 );
+  static Semaphore secadorfunc = new Semaphore( 0 );
+  static Thread asperSec = new Thread(new asperSec(secardoMin,secadorMax,asper,secadorfunc,asperfunc));
+  static Semaphore washRolFunc = new Semaphore( 0 );
+  static Thread washRolers = new Thread(new washRoler(washRolerMim,washRolerMax,washRolFunc));
+
+  private String name;
+
+  private Main(){
+    this.name = "MainThread";
+    this.setPriority(MAX_PRIORITY);
+  }
+
+  @Override
+  public void run(){
+    try{
+      synchronized(this){
+        tapete.wait();
+        asperSec.wait();
+        washRolers.wait();
+        print("ALL THREADS PAUSED....", 56);
+      }
+    }catch (InterruptedException iex) {
+    }
+  }
+  public void run(AtomicBoolean Acontrol){
+    try
+    {
+      synchronized(this){
+        if(Acontrol.get())
+        {
+          tapete.notifyAll();
+          asperSec.notifyAll();
+          washRolers.notifyAll();
+          print("ALL THREADS resumed....", 56);
+        } else print("error", 15);
+      }
+    } catch(Exception e ){}
+  }
+
+
     public static void main(String[] args) throws InterruptedException {
 
-        double access_cost = 14.5;
 
-        int asper = 5,secardoMin = 3, secadorMax = 6,washRolerMim=4,washRolerMax=8;
-
-        int users = -1,usersTryedToServerd = 0,usersTryedToServerdCancel = 0,size=20;
         Thread[] thscoinuser = new Thread[size];
 
         Semaphore[] userpayed = new Semaphore[size];
         Semaphore botaoI = new Semaphore( 1 );
 
-        Semaphore tapetefunc = new Semaphore( 0 );
-        Semaphore tapetemesg = new Semaphore( 0 );
-        Thread tapete = new Thread( new tapete(tapetefunc,tapetemesg));
-        tapete.start();
+        startThreads();
 
-        Semaphore asperfunc = new Semaphore( 0 );
-        Semaphore secadorfunc = new Semaphore( 0 );
-        Thread asperSec = new Thread(new asperSec(secardoMin,secadorMax,asper,secadorfunc,asperfunc));
-        asperSec.start();
-
-        Semaphore washRolFunc = new Semaphore( 0 );
-        Thread washRolers = new Thread(new washRoler(washRolerMim,washRolerMax,washRolFunc));
-        washRolers.start();
 
 
         Semaphore abertoFechado = new Semaphore( 1 );
@@ -40,10 +74,11 @@ public class Main
         Buffer buffer = new Buffer();
         Thread t = new Thread( new Teclado( semMT, buffer ) );
         Thread log = new Thread( new LogRegister( semMT ));  //use this one as the main controller
-
+        Main EMERGENCYCONTROLLER = new Main();
 
         t.start();
         //log.start();
+
         System.out.println("Escolha a opção na janela aberta");
 
         while ( true ) {
@@ -51,6 +86,7 @@ public class Main
             semMT.acquire();
 
             String botao = buffer.getBotao();
+            AtomicBoolean Acontrol = new AtomicBoolean(false);
 
 
             if ( botao.equals( "A" ) ) {
@@ -64,7 +100,7 @@ public class Main
                 System.out.println("Escolha a opção na janela aberta");
             }
             else if ( botao.equals( "I" ) ) { // Iniciar Lavagem
-                System.out.println( "I" );
+                print( "CAR WASH MODULE INITIATED...",56 );
                 int vezes=0;
                 if(users >= usersTryedToServerd){
                     while (botaoI.availablePermits()==1){
@@ -128,7 +164,7 @@ public class Main
                 System.out.println("Escolha a opção na janela aberta");
             }
             else if ( botao.equals( "C" ) ) { // Camcelar Operacao
-                System.out.println( "C" );
+                System.out.println( "A cancelar...." );
                 int vezes2=0;
                 usersTryedToServerdCancel = usersTryedToServerd ;
                 while(users >= usersTryedToServerdCancel){
@@ -164,10 +200,30 @@ public class Main
 
             }
             else if ( botao.equals( "E" ) ) { // pause the entire system
-                System.out.println( "E" );
+                print( "PAUSING ALL THREADS", 56 );
+                synchronized(EMERGENCYCONTROLLER)
+                {
+                  if(!Acontrol.get())
+                  {
+                    EMERGENCYCONTROLLER.run();
+                    Acontrol.compareAndExchange(false,true);
+                  }
+                  else if(Acontrol.get())
+                  {
+                    EMERGENCYCONTROLLER.run(Acontrol);
+                    Acontrol.compareAndExchange(true,false);
+                  }
+                }
             }
             else if ( botao.equals( "R" ) ) { //reset
-                System.out.println( "R" );
+                print( "Initiate Module RESET...", 56 );
+                resetSystem(tapete, asperSec, washRolers);
+                Thread.sleep(1000);
+                startThreads();
+                Thread.sleep(1000);
+                ConfigProperties.newConfiguration();
+                Thread.sleep(1000);
+                print( " Module RESET finished...", 56 );
             }
             else if ( botao.equals( "P" ) ) { //pay introduzir moedas
                 System.out.println( "P" );
@@ -189,16 +245,29 @@ public class Main
                 System.out.println("Escolha a opção na janela aberta");
             }
             else if( botao.equals( "K" ) ){
-
+                int i = 0;
                 print("INITIATING MODULE EDIT CONFIG FILE....", 56);
-                boolean cond = ConfigProperties.newConfiguration();
+
+                Double tempCost = askCost();
+                System.out.println("ID number of parameter: " + i++);
+                int tempWmim = ask();
+                System.out.println("ID number of parameter: " + i++);
+                int tempWmax = ask();
+                System.out.println("ID number of parameter: " + i++);
+                int tempSmim = ask();
+                System.out.println("ID number of parameter: " + i++);
+                int tempSmax = ask();
+                System.out.println("ID number of parameter: " + i++);
+                int tempAsper = ask();
+                boolean cond = ConfigProperties.newConfiguration(tempCost, tempWmim, tempWmax, tempSmim, tempSmax, tempAsper);
+                //boolean cond = ConfigProperties.newConfiguration();
                 if (cond)
                 {
-                    System.out.println("Configuration file successfully saved...");
+                    print("Configuration file successfully saved...",56);
                 }
                 else
                 {
-                    System.out.println("Error occured while trying to save the file...");
+                    print("Error occured while trying to save the file...", 56);
                 }
 
             }
@@ -252,4 +321,44 @@ public class Main
         }
 
     }
+    private static void resetSystem(Thread T, Thread A, Thread W) //falta dar reset ao coinMaster
+    {
+      T.interrupt();
+      A.interrupt();
+      W.interrupt();
+
+    //  C.interrupt();
+      Main.tapete = new Thread( new tapete(tapetefunc,tapetemesg));
+      Main.asperSec= new Thread(new asperSec(secardoMin,secadorMax,asper,secadorfunc,asperfunc));
+      Main.washRolers= new Thread(new washRoler(washRolerMim,washRolerMax,washRolFunc));
+    }
+    private static void startThreads()
+    {
+      tapete.start();
+      asperSec.start();
+      washRolers.start();
+    }
+    private static double askCost(){
+        Scanner ler = new Scanner(System.in);
+
+        double x;
+        System.out.println("Introduza o custo da Lavagem....");
+        x= ler.nextDouble();
+        return x;
+    }
+    private static int ask(){
+      Scanner ler = new Scanner(System.in);
+
+      int x;
+      System.out.println("Introduza a medida Consoante o valor indicado Antes....");
+      System.out.println("\t\t0-Roller minimo tempo(s)\t 1-Roller maximo tempo(s)");
+      System.out.println("\t\t2-Secador minimo tempo(s)\t 3-Secador maximo tempo(s)");
+      System.out.println("\t\t4-Aspersor tempo (s)");
+
+
+      x= ler.nextInt();
+      return x;
+    }
+
+
 }

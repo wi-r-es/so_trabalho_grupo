@@ -15,13 +15,16 @@ public class washRoler implements Runnable {
     public void run () {
         while (true) {
             try {
-                s.acquire();
-                System.out.println("Rolos ligados");
-                Thread.sleep(randomNum * 1000);
-                System.out.println("Rolos terminaram");
-                s.release();
-                Thread.sleep(1000);
+                synchronized(s){
+                  s.acquire();
+                  System.out.println("Rolos ligados");
+                  Thread.sleep(randomNum * 1000);
+                  System.out.println("Rolos terminaram");
+                  s.release();
+                  Thread.sleep(1000);
+                }
             } catch (InterruptedException iex) {
+              //Thread.join();
             }
 
         }

@@ -57,15 +57,15 @@ public class LogRegister implements Runnable
   			while (true) {
   				// Log an INFO message.
   				logger.info("Adding Log line: " + n);
-  				Thread.sleep(1000);
+  				this.wait();
   				n++;
         }
       }catch (SecurityException e) {
-  			e.printStackTrace();
+  			//e.printStackTrace();
   		} catch (IOException e) {
-  			e.printStackTrace();
+  			//e.printStackTrace();
   		} catch (InterruptedException e) {
-  			e.printStackTrace();
+  			//e.printStackTrace();
   		}
 
 
