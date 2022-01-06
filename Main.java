@@ -150,9 +150,13 @@ public class Main
                     int x;
                     System.out.println("Introduza o numero da sua senha");
                     x= ler.nextInt();
-                    userpayed[x].release();
-                    System.out.println("cancelado com sucesso");
-                    System.out.println("Total a devolver: " + access_cost);
+                    if(userpayed[x].availablePermits() == 0) {
+                        userpayed[x].release();
+                        System.out.println("cancelado com sucesso");
+                        System.out.println("Total a devolver: " + access_cost);
+                    }else{
+                        System.out.println("Usuario não encontrado");
+                    }
                 }else{
                     System.out.println( "Não exitem clientes na fila " );
                 }
