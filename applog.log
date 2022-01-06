@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2022-01-04T07:21:34.275777842Z</date>
+  <millis>1641280894275</millis>
+  <nanos>777842</nanos>
+  <sequence>0</sequence>
+  <logger>LogRegister</logger>
+  <level>SEVERE</level>
+  <class>LogRegister</class>
+  <method>run</method>
+  <thread>14</thread>
+  <message>Logger logs</message>
+  <exception>
+    <message>java.lang.RuntimeException: Error</message>
+    <frame>
+      <class>LogRegister</class>
+      <method>run</method>
+      <line>43</line>
+    </frame>
+    <frame>
+      <class>java.lang.Thread</class>
+      <method>run</method>
+      <line>833</line>
+    </frame>
+  </exception>
+</record>
+Jan 04, 2022 7:21:34 AM LogRegister run
+INFO: Adding Log line: 1
+Jan 04, 2022 7:21:35 AM LogRegister run
+INFO: Adding Log line: 2
+Jan 04, 2022 7:21:36 AM LogRegister run
+INFO: Adding Log line: 3
+Jan 04, 2022 7:21:37 AM LogRegister run
+INFO: Adding Log line: 4
+Jan 04, 2022 7:21:38 AM LogRegister run
+INFO: Adding Log line: 5
+Jan 04, 2022 7:21:39 AM LogRegister run
+INFO: Adding Log line: 6
+Jan 04, 2022 7:21:40 AM LogRegister run
+INFO: Adding Log line: 7
+Jan 04, 2022 7:21:41 AM LogRegister run
+INFO: Adding Log line: 8
+Jan 04, 2022 7:21:42 AM LogRegister run
+INFO: Adding Log line: 9
+Jan 04, 2022 7:21:43 AM LogRegister run
+INFO: Adding Log line: 10
+Jan 04, 2022 7:21:44 AM LogRegister run
+INFO: Adding Log line: 11
+Jan 04, 2022 7:21:45 AM LogRegister run
+INFO: Adding Log line: 12
+Jan 04, 2022 7:21:46 AM LogRegister run
+INFO: Adding Log line: 13
+Jan 04, 2022 7:21:47 AM LogRegister run
+INFO: Adding Log line: 14
+Jan 04, 2022 7:21:48 AM LogRegister run
+INFO: Adding Log line: 15
+Jan 04, 2022 7:21:49 AM LogRegister run
+INFO: Adding Log line: 16
+Jan 04, 2022 7:21:50 AM LogRegister run
+INFO: Adding Log line: 17
+Jan 04, 2022 7:21:51 AM LogRegister run
+INFO: Adding Log line: 18
+Jan 04, 2022 7:21:52 AM LogRegister run
+INFO: Adding Log line: 19
+Jan 04, 2022 7:21:53 AM LogRegister run
+INFO: Adding Log line: 20
+Jan 04, 2022 7:21:54 AM LogRegister run
+INFO: Adding Log line: 21
+Jan 04, 2022 7:21:55 AM LogRegister run
+INFO: Adding Log line: 22
+Jan 04, 2022 7:21:56 AM LogRegister run
+INFO: Adding Log line: 23
+Jan 04, 2022 7:21:57 AM LogRegister run
+INFO: Adding Log line: 24
+Jan 04, 2022 7:21:58 AM LogRegister run
+INFO: Adding Log line: 25
+Jan 04, 2022 7:21:59 AM LogRegister run
+INFO: Adding Log line: 26
+Jan 04, 2022 7:22:00 AM LogRegister run
+INFO: Adding Log line: 27
+Jan 04, 2022 7:22:01 AM LogRegister run
+INFO: Adding Log line: 28

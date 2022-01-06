@@ -1,70 +1,35 @@
-import java.util.Scanner;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicBoolean;
-//import java.u
-public class Main extends Thread
+
+public class Main
 {
-
-  static double access_cost = 14.5;
-  static int asper = 5,secardoMin = 3, secadorMax = 6,washRolerMim=4,washRolerMax=8;
-  static int users = -1,usersTryedToServerd = 0,usersTryedToServerdCancel = 0,size=20;
-  static Semaphore tapetefunc = new Semaphore( 0 );
-  static Semaphore tapetemesg = new Semaphore( 0 );
-  static Thread tapete = new Thread( new tapete(tapetefunc,tapetemesg));
-  static Semaphore asperfunc = new Semaphore( 0 );
-  static Semaphore secadorfunc = new Semaphore( 0 );
-  static Thread asperSec = new Thread(new asperSec(secardoMin,secadorMax,asper,secadorfunc,asperfunc));
-  static Semaphore washRolFunc = new Semaphore( 0 );
-  static Thread washRolers = new Thread(new washRoler(washRolerMim,washRolerMax,washRolFunc));
-
-  private String name;
-
-  private Main(){
-    this.name = "MainThread";
-    this.setPriority(MAX_PRIORITY);
-  }
-
-  @Override
-  public void run(){
-    try{
-      synchronized(this){
-        tapete.wait();
-        asperSec.wait();
-        washRolers.wait();
-        print("ALL THREADS PAUSED....", 56);
-      }
-    }catch (InterruptedException iex) {
-    }
-  }
-  public void run(AtomicBoolean Acontrol){
-    try
-    {
-      synchronized(this){
-        if(Acontrol.get())
-        {
-          tapete.notifyAll();
-          asperSec.notifyAll();
-          washRolers.notifyAll();
-          print("ALL THREADS resumed....", 56);
-        } else print("error", 15);
-      }
-    } catch(Exception e ){}
-  }
-
-
     public static void main(String[] args) throws InterruptedException {
 
+        double access_cost = 14.5;
 
+        int asper = 5,secardoMin = 3, secadorMax = 6,washRolerMim=4,washRolerMax=8;
+
+        int users = -1,usersTryedToServerd = -1,usersServerd = 0,size=5;
         Thread[] thscoinuser = new Thread[size];
 
         Semaphore[] userpayed = new Semaphore[size];
-        Semaphore botaoI = new Semaphore( 1 );
+/*        Semaphore botaoI = new Semaphore( 1 );
 
-        startThreads();
+        Semaphore tapetefunc = new Semaphore( 0 );
+        Semaphore tapetemesg = new Semaphore( 0 );
+        Thread tapete = new Thread( new tapete(tapetefunc,tapetemesg));
+        tapete.start();
 
+        Semaphore asperfunc = new Semaphore( 0 );
+        Semaphore secadorfunc = new Semaphore( 0 );
+        Thread asperSec = new Thread(new asperSec(secardoMin,secadorMax,asper,secadorfunc,asperfunc));
+        asperSec.start();
 
+        Semaphore washRolFunc = new Semaphore( 0 );
+        Thread washRolers = new Thread(new washRoler(washRolerMim,washRolerMax,washRolFunc));
+        washRolers.start();
 
-        Semaphore abertoFechado = new Semaphore( 1 );
+*/
+        Semaphore abertoFechado = new Semaphore( 0 ); // 0 fechado 1 aberto
 
 
         //Object lock = new Object(); //mutex lock        usar com synchronized(){} para objetos partilhados
@@ -73,12 +38,20 @@ public class Main extends Thread
         Semaphore semMT = new Semaphore( 0 );
         Buffer buffer = new Buffer();
         Thread t = new Thread( new Teclado( semMT, buffer ) );
-        Thread log = new Thread( new LogRegister( semMT ));  //use this one as the main controller
-        Main EMERGENCYCONTROLLER = new Main();
+        Thread log = new Thread( new LogRegister( semMT ));  //use this one as the main sem?
+
+        Thread Tapete = new Thread(new tapete());
+        Thread AsperSec = new Thread(new asperSec());
+        Thread Roler = new Thread(new washRoler());
+
+
+        Semaphore mainsem = new Semaphore( 1, true );
+        Semaphore controller = new Semaphore(1,true);
+
+
 
         t.start();
         //log.start();
-
         System.out.println("Escolha a opção na janela aberta");
 
         while ( true ) {
@@ -86,73 +59,58 @@ public class Main extends Thread
             semMT.acquire();
 
             String botao = buffer.getBotao();
-            AtomicBoolean Acontrol = new AtomicBoolean(false);
 
 
             if ( botao.equals( "A" ) ) {
-                abertoFechado.acquire();
+                abertoFechado.release();
                 System.out.println( "Aberto a novos clientes" );
                 System.out.println("Escolha a opção na janela aberta");
             }
             else if ( botao.equals( "F" ) ) {
-                abertoFechado.release();
+                abertoFechado.acquire();
                 System.out.println( "Fechado para novos clientes" );
                 System.out.println("Escolha a opção na janela aberta");
             }
             else if ( botao.equals( "I" ) ) { // Iniciar Lavagem
                 print( "CAR WASH MODULE INITIATED...",56 );
-                int vezes=0;
-                if(users >= usersTryedToServerd){
-                    while (botaoI.availablePermits()==1){
+                int vezes=0; //PARA QUE ESTA VARIAVEL ???
+
+                //print("teste 1", 10);
+                if(users > usersTryedToServerd){
+                  //print("teste 2", 10);
+                    while (users > usersTryedToServerd){
+                        usersTryedToServerd++;
+                        //print("teste 3", 10);
                         if (userpayed[usersTryedToServerd].availablePermits() == 0) {
-                            if(botaoI.tryAcquire()) {
+                            vezes++;
+                            //print("teste 4", 10);
+                            if(mainsem.tryAcquire()) {
 
-                                tapetefunc.release();
-                                while (tapetemesg.availablePermits()==0){}
+                              {
+                                tapeteMoveCarForward(Tapete, controller);
 
-                                Thread.sleep(1000);
+                                print("O carro vai ser lavado agora....");
+                                AsperSec.sleep(100);
 
-                                asperfunc.release();
-                                Thread.sleep(1000);
-                                while (asperfunc.availablePermits()==0){}
-                                asperfunc.acquire();
+                                aspersorToCar(AsperSec, controller);
 
-                                Thread.sleep(1000);
+                                Roler.sleep(100);
+                                rollerWashCar(Roler, controller);
 
-                                washRolFunc.release();
-                                Thread.sleep(1000);
-                                while (washRolFunc.availablePermits()==0){}
-                                washRolFunc.acquire();
+                                AsperSec.sleep(100);
+                                secarCarro(AsperSec, controller);
 
-                                Thread.sleep(1000);
-
-                                secadorfunc.release();
-                                Thread.sleep(1000);
-                                while (secadorfunc.availablePermits()==0){}
-                                secadorfunc.acquire();
-
-
-                                Thread.sleep(3000);
-                                tapetefunc.release();
-                                Thread.sleep(500);
-                                tapetefunc.acquire();
                                 System.out.println( "Lavagem completa" );
-                                userpayed[usersTryedToServerd].release();
-                                usersTryedToServerd++;
-                                vezes++;
+                                print("Volte Sempre...");
+                                //remove one client or next cliente
 
+                                usersServerd++;
+                                mainsem.release();
+                              }
                             }else{
                                 System.out.println( "Sistema ocupado" );
                             }
-                        }else{
-                            usersTryedToServerd++;
                         }
-                        if(users == usersTryedToServerd){
-                            botaoI.acquire();
-                        }
-                    }
-                    if(botaoI.availablePermits()==0){
-                        botaoI.release();
                     }
                     if(vezes == 0){
                         System.out.println( "Não exitem clientes na fila " );
@@ -164,70 +122,23 @@ public class Main extends Thread
                 System.out.println("Escolha a opção na janela aberta");
             }
             else if ( botao.equals( "C" ) ) { // Camcelar Operacao
-                System.out.println( "A cancelar...." );
-                int vezes2=0;
-                usersTryedToServerdCancel = usersTryedToServerd ;
-                while(users >= usersTryedToServerdCancel){
-                    if (userpayed[usersTryedToServerdCancel].availablePermits() == 0) {
-                        vezes2++;
-                    }
-                    usersTryedToServerdCancel++;
-                }
-                usersTryedToServerdCancel = usersTryedToServerd ;
-                if(vezes2 != 0) {
-                    System.out.println("Users que comcluiram pagamentos");
-                    while (users >= usersTryedToServerdCancel) {
-                        if (userpayed[usersTryedToServerdCancel].availablePermits() == 0) {
-                            System.out.println("User: " + usersTryedToServerdCancel);
-                        }
-                        usersTryedToServerdCancel++;
-                    }
-                    Scanner ler = new Scanner(System.in);
-                    int x;
-                    System.out.println("Introduza o numero da sua senha");
-                    x= ler.nextInt();
-                    if(userpayed[x].availablePermits() == 0) {
-                        userpayed[x].release();
-                        System.out.println("cancelado com sucesso");
-                        System.out.println("Total a devolver: " + access_cost);
-                    }else{
-                        System.out.println("Usuario não encontrado");
-                    }
-                }else{
-                    System.out.println( "Não exitem clientes na fila " );
-                }
-                System.out.println("Escolha a opção na janela aberta");
-
+                System.out.println( "C" );
             }
             else if ( botao.equals( "E" ) ) { // pause the entire system
-                print( "PAUSING ALL THREADS", 56 );
-                synchronized(EMERGENCYCONTROLLER)
-                {
-                  if(!Acontrol.get())
-                  {
-                    EMERGENCYCONTROLLER.run();
-                    Acontrol.compareAndExchange(false,true);
-                  }
-                  else if(Acontrol.get())
-                  {
-                    EMERGENCYCONTROLLER.run(Acontrol);
-                    Acontrol.compareAndExchange(true,false);
-                  }
-                }
+              //Tapete
+
+              //AsperSec.pause();
+              //Roler
+              print( "EVERYTHING IS BEING PAUSED...",56 );
+
+
             }
             else if ( botao.equals( "R" ) ) { //reset
-                print( "Initiate Module RESET...", 56 );
-                resetSystem(tapete, asperSec, washRolers);
-                Thread.sleep(1000);
-                startThreads();
-                Thread.sleep(1000);
-                ConfigProperties.newConfiguration();
-                Thread.sleep(1000);
-                print( " Module RESET finished...", 56 );
+                System.out.println( "R" );
             }
             else if ( botao.equals( "P" ) ) { //pay introduzir moedas
                 System.out.println( "P" );
-                if(abertoFechado.availablePermits() == 0) {
+                if(abertoFechado.availablePermits() == 1) {
                     users++;
                     if (users == thscoinuser.length) {
                         size *= 2;
@@ -245,43 +156,28 @@ public class Main extends Thread
                 System.out.println("Escolha a opção na janela aberta");
             }
             else if( botao.equals( "K" ) ){
-                int i = 0;
-                print("INITIATING MODULE EDIT CONFIG FILE....", 56);
 
-                Double tempCost = askCost();
-                System.out.println("ID number of parameter: " + i++);
-                int tempWmim = ask();
-                System.out.println("ID number of parameter: " + i++);
-                int tempWmax = ask();
-                System.out.println("ID number of parameter: " + i++);
-                int tempSmim = ask();
-                System.out.println("ID number of parameter: " + i++);
-                int tempSmax = ask();
-                System.out.println("ID number of parameter: " + i++);
-                int tempAsper = ask();
-                boolean cond = ConfigProperties.newConfiguration(tempCost, tempWmim, tempWmax, tempSmim, tempSmax, tempAsper);
-                //boolean cond = ConfigProperties.newConfiguration();
+                print("INITIATING MODULE EDIT CONFIG FILE....", 56);
+                boolean cond = ConfigProperties.newConfiguration();
                 if (cond)
                 {
-                    print("Configuration file successfully saved...",56);
+                  System.out.println("Configuration file successfully saved...");
                 }
                 else
                 {
-                    print("Error occured while trying to save the file...", 56);
+                  System.out.println("Error occured while trying to save the file...");
                 }
 
             }
             else if( botao.equals( "L" ) ){
-                print("INITIATING MODULE LOAD CONFIG FILE....", 56);
-                config cfg = new config();
-                access_cost  = Double.parseDouble(cfg.getProperty("access_cost"));
-                asper        = Integer.parseInt(cfg.getProperty("asper"));
-                secardoMin   = Integer.parseInt(cfg.getProperty("secardoMin"));
-                secadorMax   = Integer.parseInt(cfg.getProperty("secadorMax"));
-                washRolerMim = Integer.parseInt(cfg.getProperty("washRolerMim"));
-                washRolerMax = Integer.parseInt(cfg.getProperty("washRolerMax"));
-
-                System.out.println(access_cost + "     "+ asper + "     "+ secardoMin+ "     "+ secadorMax+ "     "+ washRolerMim+  "     "+ washRolerMax);
+              print("INITIATING MODULE LOAD CONFIG FILE....", 56);
+              config cfg = new config();
+              access_cost   = Double.parseDouble(cfg.getProperty("access_cost"));
+              int durationT   = Integer.parseInt(cfg.getProperty("durationT"));
+              int durationR   = Integer.parseInt(cfg.getProperty("durationR"));
+              boolean asperAct   = Boolean.parseBoolean(cfg.getProperty("asperAct"));
+              boolean secAct   = Boolean.parseBoolean(cfg.getProperty("secAct"));
+              System.out.println(access_cost + "     "+ durationR + "     "+ durationT+ "     "+ asperAct+ "     "+ secAct);
 
             }
         }
@@ -293,72 +189,121 @@ public class Main extends Thread
 
     private static void print(String message, int k)
     {
-        beautify(k);
-        beautify(k,50);
-        System.out.print(message);
-        beautify(k,50);
-        beautify();
-        beautify(k);
+      beautify(k);
+      beautify(k,50);
+      System.out.print(message);
+      beautify(k,50);
+      beautify();
+      beautify(k);
+
+    }
+    private static void print(String message)
+    {
+
+      System.out.println(message);
+
 
     }
     private static void beautify()
     {
-        System.out.println();
+      System.out.println();
     }
     private static void beautify(int k)
     {
-        for(int i=0; i<k-6; i++)
-        {
-            System.out.print("#");
-        }
-        beautify();
+      for(int i=0; i<k-6; i++)
+      {
+        System.out.print("#");
+      }
+      beautify();
     }
     private static void beautify(int k, int d)
     {
-        for(int i=0; i<k-d; i++)
+      for(int i=0; i<k-d; i++)
+      {
+        System.out.print("#");
+      }
+
+    }
+
+    private static void tapeteMoveCarForward(Thread th, Semaphore sem){
+      try{
+        sem.acquireUninterruptibly();
+
         {
-            System.out.print("#");
+          synchronized(th)
+          {
+            th.start();
+            th.sleep(300);
+            print("Waiting....");
+            //th.notifyAll();
+            th.notify();
+            th.sleep(3000);
+
+            //th.notifyAll();
+            //Thread.sleep(2000);
+            //print("tapete release sem");
+          }
+
+
+          th.interrupt();
+          sem.release();
         }
-
+      }catch(InterruptedException e ){}
     }
-    private static void resetSystem(Thread T, Thread A, Thread W) //falta dar reset ao coinMaster
+    private static void aspersorToCar(Thread th, Semaphore sem){
+      try
+      {
+        sem.acquireUninterruptibly();
+        {
+          synchronized(th)
+          {
+            th.run();
+            th.sleep(2000);
+            //print("aspersor release sem");
+            sem.release();
+          }
+        }
+      }catch(InterruptedException e ){}
+    }
+    private static void rollerWashCar(Thread th, Semaphore sem)
     {
-      T.interrupt();
-      A.interrupt();
-      W.interrupt();
-
-    //  C.interrupt();
-      Main.tapete = new Thread( new tapete(tapetefunc,tapetemesg));
-      Main.asperSec= new Thread(new asperSec(secardoMin,secadorMax,asper,secadorfunc,asperfunc));
-      Main.washRolers= new Thread(new washRoler(washRolerMim,washRolerMax,washRolFunc));
+      try
+      {
+        sem.acquireUninterruptibly();
+        {
+          synchronized(th)
+          {
+            th.start();
+            th.sleep(1000);
+            //print("roller release sem");
+          }
+          sem.release();
+        }
+      }catch(InterruptedException e ){}
     }
-    private static void startThreads()
+    private static void secarCarro(Thread th, Semaphore sem)
     {
-      tapete.start();
-      asperSec.start();
-      washRolers.start();
+      try
+      {
+        sem.acquireUninterruptibly();
+        {
+          synchronized(th)
+          {
+            th.run();
+            th.sleep(1000);
+            sem.release();
+            //print("secador release sem");
+          }
+        }
+      }catch(InterruptedException e ){}
     }
-    private static double askCost(){
-        Scanner ler = new Scanner(System.in);
+    private static void pauseALL() throws InterruptedException
+    {
 
-        double x;
-        System.out.println("Introduza o custo da Lavagem....");
-        x= ler.nextDouble();
-        return x;
     }
-    private static int ask(){
-      Scanner ler = new Scanner(System.in);
+    private static void resetSystem()
+    {
 
-      int x;
-      System.out.println("Introduza a medida Consoante o valor indicado Antes....");
-      System.out.println("\t\t0-Roller minimo tempo(s)\t 1-Roller maximo tempo(s)");
-      System.out.println("\t\t2-Secador minimo tempo(s)\t 3-Secador maximo tempo(s)");
-      System.out.println("\t\t4-Aspersor tempo (s)");
-
-
-      x= ler.nextInt();
-      return x;
     }
-
 
 }
